@@ -21,9 +21,10 @@ namespace SpeedTest
         {
             Console.Write("Running... ");
 
-            var times = Enumerable.Range(0, RUNS)
-                .Select(_ => new
+            var times = Enumerable.Range(1, RUNS)
+                .Select(run => new
                 {
+                    Run = run,
                     Native = Time(RunNative),
                     Dynamic = Time(RunDynamic),
                     Reflection = Time(RunReflection),

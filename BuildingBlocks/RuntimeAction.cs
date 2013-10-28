@@ -10,8 +10,7 @@ namespace BuildingBlocks
 {
     public class RuntimeAction<TTarget, TParam>
     {
-        MethodInfo _method;
-        Task<Action<TTarget, TParam>> _builderTask;
+        public Action<TTarget, TParam> Action { get; private set; }
 
         public RuntimeAction(MethodInfo method)
         {
@@ -26,16 +25,15 @@ namespace BuildingBlocks
                 throw new ArgumentException("method must except one parameter of type TParam", "method");
             }
 
-            _method = method;
-            _builderTask = Task.Factory.StartNew<Action<TTarget, TParam>>(BuildAction);
+            Action = BuildAction(method);
         }
 
-        private Action<TTarget, TParam> BuildAction()
+        static Action<TTarget, TParam> BuildAction(MethodInfo method)
         {
             var target = Expression.Parameter(typeof(TTarget), "target");
             var param = Expression.Parameter(typeof(TParam), "param");
 
-            var call = Expression.Call(target, _method, param);
+            var call = Expression.Call(target, method, param);
 
             var lambda = Expression.Lambda<Action<TTarget, TParam>>(call, target, param);
 
@@ -44,14 +42,7 @@ namespace BuildingBlocks
 
         public void Invoke(TTarget target, TParam param)
         {
-            if (_builderTask.IsCompleted)
-            {
-                _builderTask.Result(target, param);
-            }
-            else
-            {
-                _method.Invoke(target, new object[] { param });
-            }
+            Action(target, param);
         }
     }
 }
