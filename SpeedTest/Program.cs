@@ -29,7 +29,8 @@ namespace SpeedTest
                     Dynamic = Time(RunDynamic),
                     Reflection = Time(RunReflection),
                     ExpressionTree = Time(RunExpressionTree),
-                    RuntimeAction = Time(RunRuntimeAction)
+                    RuntimeAction = Time(RunRuntimeAction),
+                    CreateDelegate = Time(RunCreateDelegate)
                 })
                 .ToArray();
 
@@ -109,7 +110,16 @@ namespace SpeedTest
             {
                 s_runtimeAction.Value.Invoke(inst, string.Empty);
             }
-        }        
+        }
+
+        static readonly Lazy<Action<string>> s_createDelegate = new Lazy<Action<string>>(() => (Action<string>)Delegate.CreateDelegate(typeof(Action<string>), new TestTarget(), typeof(TestTarget).GetMethod("DoSomething")));
+        static void RunCreateDelegate()
+        {
+            for (int i = 0; i < ITERATIONS; i++)
+            {
+                s_createDelegate.Value(string.Empty);
+            }
+        }
 
         static double Time(Action action)
         {
