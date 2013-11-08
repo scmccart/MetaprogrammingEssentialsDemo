@@ -30,18 +30,23 @@ namespace BuildingBlocks
 
         static Action<TTarget, TParam> BuildAction(MethodInfo method)
         {
+            // 1. Declare Parameters
             var target = Expression.Parameter(typeof(TTarget), "target");
             var param = Expression.Parameter(typeof(TParam), "param");
 
+            // 2. Build out body
             var call = Expression.Call(target, method, param);
 
+            // 3. Pull together in Lambda
             var lambda = Expression.Lambda<Action<TTarget, TParam>>(call, target, param);
 
+            // 4. Compile
             return lambda.Compile();
         }
 
         public void Invoke(TTarget target, TParam param)
         {
+            // 5. Use!
             Action(target, param);
         }
     }

@@ -39,6 +39,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="RuntimeCreator.cs" />
+    <Compile Include="RuntimeSetter.cs" />
+    <Compile Include="RuntimeGetter.cs" />
     <Compile Include="RuntimeAction.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
